@@ -1,32 +1,29 @@
 <?php
+/**
+ * Base theme action class
+ *
+ * @abstract
+ * @author oncletom
+ */
 abstract class BaseThemeAction
 {
+  protected $theme;
+  public abstract function dispatch();
+
   /**
    * Enqueue javascripts for the theme
    *
    * Use as `add_action('wp', array('ThemeAction', 'loadJavascripts'));`
    *
-   * @static
+   * @todo   update documentation, static call is not used anymore
    * @author oncletom
    */
-  public static function loadJavascripts()
+  public function loadJavascripts()
   {
     //JS for threaded comments
     if (is_singular())
     {
       wp_enqueue_script('comment-reply');
     }
-  }
-
-  /**
-   * Enqueue stylesheets for the theme
-   *
-   * Use as `add_action('wp', array('ThemeAction', 'loadStylesheets'));`
-   *
-   * @static
-   * @author oncletom
-   */
-  public static function loadStylesheets()
-  {
   }
 }

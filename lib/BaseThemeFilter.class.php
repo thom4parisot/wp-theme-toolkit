@@ -1,6 +1,15 @@
 <?php
+/**
+ * Base theme filter class
+ *
+ * @abstract
+ * @author oncletom
+ */
 abstract class BaseThemeFilter
 {
+  protected $theme;
+  public abstract function dispatch();
+
   /**
    * Removes pages from search
    *
@@ -8,7 +17,7 @@ abstract class BaseThemeFilter
    * @return null
    * @param WP_Query $query
    */
-  public static function refineSearchToPost(WP_Query $query)
+  public function refineSearchToPost(WP_Query $query)
   {
     if (!!$query->is_search)
     {
@@ -19,12 +28,11 @@ abstract class BaseThemeFilter
   /**
    * Generates a slug from a string, using iconv if possible
    *
-   * @static
    * @author oncletom
    * @param string $string
    * @return string
    */
-  public static function generateSlugFromString($string)
+  public function generateSlugFromString($string)
   {
     $string = strtolower($string);
     static $is_locale_set;

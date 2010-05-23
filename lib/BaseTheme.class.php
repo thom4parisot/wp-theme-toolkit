@@ -1,6 +1,12 @@
 <?php
-require_once dirname(__FILE__).'/functions.php';
-
+/**
+ * Base theme class
+ *
+ * You just need to inherit from it to build your own themes easily
+ *
+ * @abstract
+ * @author oncletom
+ */
 abstract class BaseTheme
 {
   public static $feed_patterns = array(
@@ -9,37 +15,41 @@ abstract class BaseTheme
   );
   public static $feed_template = array('href' => '', 'rel' => 'alternate', 'type' => null, 'title' => null);
   public static $feed_template_keys = array('%href%', '%rel%', '%title%', '%type%');
-  protected static $parent_theme = null;
+  protected $action, $filter;
 
-  public static function getParentTheme()
-  {
-    return self::$parent_theme;
-  }
-
-  public static function getPathToTemplateFile($filename)
-  {
-    if (null === self::$parent_theme)
-    {
-      throw new Exception("No parent theme has been setup.");
-    }
-    
-    return get_theme_root().'/'.self::$parent_theme.'/'.$filename;
-  }
-  
   /**
-   * Generates title for the page
+   * Class factory
    *
+   * @todo  instanciate Action and Filter through configuration
    * @static
-   * @author oncletom
-   * @return string title
+   * @param string $name Name of the class to call
+   * @param array $options
    */
-  public function getTitle()
+  public static function createInstance($name = 'Theme', array $options = array())
   {
-    $title = wp_title('', false);
+    $instance = new $name($options);
 
-    return $title
-      ? sprintf('%s - %s', $title, get_bloginfo())
-      : get_bloginfo().' : '.get_bloginfo('description');
+    return $instance;
+  }
+
+  /**
+   * Retrieves the action class
+   *
+   * @return BaseThemeAction
+   */
+  public function getAction()
+  {
+    return $this->action;
+  }
+
+  /**
+   * Retrieves the filter class
+   *
+   * @return BaseThemeFilter
+   */
+  public function getFilter()
+  {
+    return $this->filter;
   }
 
   /**
@@ -49,6 +59,7 @@ abstract class BaseTheme
    * `automatic_feed_links(false);`
    * `automatic_feed_links(true);`
    *
+   * @todo move this in filter
    * @static
    * @author oncletom
    * @uses filter::get_feeds
@@ -88,9 +99,26 @@ abstract class BaseTheme
       echo str_replace(self::$feed_template_keys, $feed, self::$feed_patterns[$type])."\n";
     }
   }
-  
-  public static function setParentTheme($folder_name)
+
+  /**
+   * Registers the ThemeAction class
+   *
+   * @param BaseThemeAction $instance
+   */
+  public function setThemeAction(BaseThemeAction $instance)
   {
-    self::$parent_theme = $folder_name ? $folder_name : null;
+    $this->action = $instance;
+    $this->action->dispatch();
+  }
+
+  /**
+   * Registers the ThemeFilter class
+   *
+   * @param BaseThemeFilter $instance
+   */
+  public function setThemeFilter(BaseThemeFilter $instance)
+  {
+    $this->filter = $instance;
+    $this->filter->dispatch();
   }
 }
