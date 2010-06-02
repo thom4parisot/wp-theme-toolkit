@@ -5,7 +5,8 @@
  * You just need to inherit from it to build your own themes easily
  *
  * @abstract
- * @author oncletom
+ * @author  oncletom
+ * @version 1.0
  */
 abstract class BaseTheme
 {
@@ -16,6 +17,14 @@ abstract class BaseTheme
   public static $feed_template = array('href' => '', 'rel' => 'alternate', 'type' => null, 'title' => null);
   public static $feed_template_keys = array('%href%', '%rel%', '%title%', '%type%');
   protected $action, $filter;
+
+  /**
+   * Dispatch everything needed to make the instance workable and configured
+   *
+   * @abstract
+   * @since 1.0
+   */
+  public abstract function dispatch();
 
   /**
    * Class factory
